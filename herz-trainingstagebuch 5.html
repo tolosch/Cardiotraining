@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Herz-Training"/>
+<title>❤️ Herz-Trainingstagebuch</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#162840;font-family:Georgia,serif;color:#ddeeff;min-height:100vh;overscroll-behavior:none;}
+button{font-family:Georgia,serif;cursor:pointer;}
+input,select,textarea{font-family:Georgia,serif;outline:none;-webkit-appearance:none;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:#4a6888;border-radius:2px;}
+
+#header{
+  background:linear-gradient(90deg,#1565c0,#1e88e5);
+  padding:28px 20px 16px;
+  padding-top:max(env(safe-area-inset-top,0px),28px);
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 4px 24px #1565c055;
+}
+#header .sub{font-size:10px;letter-spacing:3px;color:#90caf9cc;text-transform:uppercase;margin-bottom:3px;}
+#header h1{font-size:22px;font-weight:bold;}
+.nav{display:flex;gap:4px;margin-top:14px;}
+.nav button{
+  padding:7px 12px;border-radius:18px;border:none;
+  background:transparent;color:#90caf988;font-size:12px;transition:all .2s;
+}
+.nav button.active{background:#ffffff22;color:#fff;font-weight:bold;}
+
+#main{max-width:540px;margin:0 auto;padding:18px 14px 100px;}
+
+.card{background:#ffffff0d;border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid #1e4060;}
+.card-title{font-size:11px;font-weight:bold;color:#90caf9;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
+.label{font-size:10px;color:#4a6888;letter-spacing:2px;margin-bottom:5px;text-transform:uppercase;}
+.inp{
+  background:#0f2035;border:1px solid #4a6888;border-radius:8px;
+  color:#ddeeff;font-family:Georgia,serif;font-size:14px;
+  padding:8px 12px;width:100%;display:block;
+}
+.inp-sm{width:auto;display:inline-block;}
+
+.check-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;padding:2px 0;}
+.check-box{
+  width:24px;height:24px;border-radius:6px;border:2px solid #4a6888;
+  background:transparent;display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:#4caf7d;flex-shrink:0;transition:all .2s;
+}
+.check-box.on{border-color:#4caf7d;background:#4caf7d22;}
+.check-label{font-size:14px;line-height:1.3;}
+
+.feeling-grid{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
+.feel-btn{
+  width:36px;height:36px;border-radius:50%;border:2px solid #4a6888;
+  background:transparent;color:#7ab0d8;font-size:13px;font-weight:bold;transition:all .2s;
+}
+.feel-btn.on{border-color:#1565c0;background:#1565c0;color:#fff;}
+
+.exertion-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+.ex-btn{
+  padding:7px 13px;border-radius:18px;border:2px solid #4a6888;
+  background:transparent;color:#7ab0d8;font-size:12px;transition:all .2s;
+}
+.ex-btn.on{border-color:#1e88e5;background:#1e88e522;color:#cce4ff;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+
+/* exercise table */
+.ex-table{width:100%;border-collapse:collapse;font-size:13px;}
+.ex-table th{padding:5px 4px;font-size:10px;letter-spacing:1px;font-weight:normal;color:#4a6888;}
+.ex-table th.active-col{color:#90caf9;}
+.ex-table td{padding:9px 4px;border-top:1px solid #1e3550;}
+.ex-table td.ex-name{color:#c8dcf0;line-height:1.3;}
+.ex-table td.ex-cell{text-align:center;}
+.cb-btn{
+  width:30px;height:30px;border-radius:7px;border:2px solid #4a6888;
+  background:transparent;color:#4caf7d;font-size:16px;
+  display:flex;align-items:center;justify-content:center;margin:0 auto;transition:all .2s;
+}
+.cb-btn.on{border-color:#4caf7d;background:#4caf7d22;}
+.cb-dash{color:#1e3550;font-size:18px;text-align:center;}
+
+.progress-bar-wrap{margin-top:14px;}
+.progress-info{display:flex;justify-content:space-between;font-size:11px;color:#4a6888;margin-bottom:5px;}
+.progress-track{height:7px;border-radius:4px;background:#1e4060;overflow:hidden;}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#1e88e5,#4caf7d);transition:width .35s;}
+
+.save-btn{
+  width:100%;padding:16px;border-radius:14px;border:none;
+  background:linear-gradient(90deg,#1565c0,#1e88e5);
+  color:#fff;font-size:17px;font-weight:bold;
+  box-shadow:0 4px 20px #1565c055;margin-bottom:8px;
+}
+
+/* history */
+.hist-item{background:#ffffff0d;border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #1e4060;}
+.hist-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.hist-date{font-size:15px;font-weight:bold;color:#90caf9;}
+.hist-meta{font-size:12px;color:#7ab0d8;margin-top:4px;line-height:1.6;}
+.hist-pct{text-align:center;flex-shrink:0;}
+.hist-pct .big{font-size:22px;font-weight:bold;}
+.hist-pct .small{font-size:10px;color:#4a6888;}
+.pain-note{margin-top:10px;font-size:12px;color:#e8856a;background:#e5393515;padding:7px 10px;border-radius:8px;}
+.hist-actions{display:flex;gap:8px;margin-top:12px;}
+.sm-btn{padding:6px 12px;border-radius:8px;border:1px solid #4a6888;font-size:12px;}
+
+/* stats */
+.stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.stat-card{background:#ffffff0d;border-radius:12px;padding:14px 8px;border:1px solid #1e4060;text-align:center;}
+.stat-card .st{font-size:10px;color:#4a6888;letter-spacing:1px;margin-bottom:4px;}
+.stat-card .sv{font-size:24px;font-weight:bold;color:#90caf9;}
+.stat-card .su{font-size:10px;color:#4a6888;margin-top:2px;}
+
+.chart-card{background:#ffffff0d;border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid #1e4060;}
+.chart-title{font-size:11px;color:#90b8d8;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
+.chart-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+.dist-bar{margin-bottom:10px;}
+.dist-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+.dist-track{height:8px;border-radius:4px;background:#1e4060;overflow:hidden;}
+.dist-fill{height:100%;border-radius:4px;transition:width .5s;}
+
+.hint{background:#ffffff08;border-radius:12px;padding:14px;border:1px solid #1e4060;font-size:12px;color:#4a6888;line-height:1.7;}
+
+.empty{text-align:center;color:#4a6888;padding:48px 16px;font-size:14px;line-height:1.8;}
+.view{display:none;}
+.view.active{display:block;}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="sub">Mein</div>
+  <h1>❤️ Herz-Trainingstagebuch</h1>
+  <div class="nav">
+    <button class="active" onclick="showView('log')">✏️ Eintrag</button>
+    <button onclick="showView('history')">📋 Verlauf</button>
+    <button onclick="showView('stats')">📊 Auswertung</button>
+  </div>
+</div>
+
+<div id="main">
+  <!-- LOG -->
+  <div id="view-log" class="view active">
+    <div class="card">
+      <div class="card-title">📅 Datum & Start</div>
+      <div class="label">Datum</div>
+      <input type="date" id="f-date" class="inp" style="margin-bottom:12px"/>
+      <div class="label">Uhrzeit</div>
+      <input type="time" id="f-time" class="inp" style="margin-bottom:12px"/>
+      <div class="label">Gefühl vor dem Start (1 = müde · 10 = voller Energie)</div>
+      <div class="feeling-grid" id="feeling-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔥 Warm-Up</div>
+      <div class="check-row" onclick="toggle('warmup')">
+        <div class="check-box" id="cb-warmup"></div>
+        <span class="check-label">3 Min. Treppensteigen (erste Minute gemütlich, dann steigern)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💪 Hauptteil</div>
+      <div class="grid2">
+        <div>
+          <div class="label">Runden heute</div>
+          <select id="f-rounds" class="inp" onchange="renderExTable()">
+            <option value="1">1 Runde</option>
+            <option value="2" selected>2 Runden ★</option>
+            <option value="3">3 Runden</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">Belastung / Übung</div>
+          <select id="f-secs" class="inp">
+            <option value="20">20 Sek.</option>
+            <option value="25">25 Sek.</option>
+            <option value="30" selected>30 Sek.</option>
+            <option value="35">35 Sek.</option>
+            <option value="40">40 Sek.</option>
+            <option value="45">45 Sek.</option>
+            <option value="50">50 Sek.</option>
+            <option value="60">60 Sek.</option>
+          </select>
+        </div>
+      </div>
+      <div id="ex-table-wrap"></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-info"><span>Fortschritt</span><span id="prog-text">0/18 · 0%</span></div>
+        <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌬️ Cool-Down</div>
+      <div class="check-row" onclick="toggle('cooldown')">
+        <div class="check-box" id="cb-cooldown"></div>
+        <span class="check-label">2 Min. locker gehen & tief in den Bauch atmen</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🚶 Gehtraining</div>
+      <div class="check-row" onclick="toggle('walkDone')">
+        <div class="check-box" id="cb-walkDone"></div>
+        <span class="check-label">Gehtraining erledigt</span>
+      </div>
+      <div id="walk-extra" style="display:none">
+        <div class="label" style="margin-top:8px">Dauer (Minuten) – Ziel: 30–60 Min.</div>
+        <input type="number" id="f-walkmin" class="inp inp-sm" min="0" max="120" value="0" style="width:90px;margin-bottom:10px"/>
+        <div class="check-row" onclick="toggle('intervalOk')">
+          <div class="check-box" id="cb-intervalOk"></div>
+          <span class="check-label">Intervall-Prinzip eingehalten (Pause bei Schmerz)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 Mein Feedback</div>
+      <div class="label">Wie anstrengend war es?</div>
+      <div class="exertion-grid" id="exertion-grid" style="margin-bottom:14px"></div>
+      <div class="label">Schmerzen oder hat etwas gezwickt?</div>
+      <textarea id="f-pain" class="inp" rows="2" placeholder="Alles gut / Knie links etwas / …" style="resize:vertical;margin-bottom:14px"></textarea>
+      <div class="check-row" onclick="toggle('breathingOk')">
+        <div class="check-box" id="cb-breathingOk"></div>
+        <span class="check-label">Atmung fließen gelassen & Puls schnell beruhigt</span>
+      </div>
+    </div>
+
+    <button class="save-btn" id="save-btn" onclick="saveSession()">💾 Eintrag speichern</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="view-history" class="view">
+    <div style="font-size:20px;font-weight:bold;margin-bottom:16px">📋 Meine Einträge</div>
+    <div id="history-list"></div>
+  </div>
+
+  <!-- STATS -->
+  <div id="view-stats" class="view">
+    <div style="font-size:20px;font-weight:bold;margin-bottom:16px">📊 Auswertung</div>
+    <div class="stat-cards" id="stat-cards"></div>
+    <div id="charts-area"></div>
+  </div>
+</div>
+
+<script>
+const EXERCISES = [
+  "Kniebeuge","Liegestütz gegen die Wand","Wadenheben auf der Stufe",
+  "Beinstrecken im Sitzen","Gegenstände übergeben","Rückenübung gegen die Wand",
+  "Becken heben (Glute Bridge)","Beinheben in Rückenlage","Superman in Bauchlage"
+];
+const EXERTION = ["Leicht","Etwas anstrengend","Anstrengend","Zu anstrengend"];
+const EXERTION_COLORS = {"Leicht":"#4caf7d","Etwas anstrengend":"#f5c99a","Anstrengend":"#f0a020","Zu anstrengend":"#e53935"};
+const KEY = "herz_v2";
+
+let sessions = [];
+let editIdx = null;
+let state = emptyState();
+
+function emptyState() {
+  const d = new Date();
+  const iso = d.toISOString().slice(0,10);
+  return {
+    date:iso, time:"", feeling:5,
+    warmup:false, rounds:2, loadSeconds:30,
+    exercises: Array(9).fill(null).map(()=>[false,false,false]),
+    cooldown:false, walkDone:false, walkMinutes:0, intervalOk:false,
+    exertion:"", pain:"", breathingOk:false
+  };
+}
+
+function load() {
+  try { sessions = JSON.parse(localStorage.getItem(KEY)||"[]"); } catch{ sessions=[]; }
+}
+function save() { localStorage.setItem(KEY, JSON.stringify(sessions)); }
+
+function formatDate(iso) {
+  const d = new Date(iso+"T12:00:00");
+  return d.toLocaleDateString("de-DE",{weekday:"short",day:"2-digit",month:"2-digit"});
+}
+
+// ── View switching ──
+function showView(v) {
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
+  document.getElementById("view-"+v).classList.add("active");
+  document.querySelectorAll(".nav button").forEach((b,i)=>{
+    b.classList.toggle("active", ["log","history","stats"][i]===v);
+  });
+  if(v==="history") renderHistory();
+  if(v==="stats") renderStats();
+}
+
+// ── Feeling buttons ──
+function renderFeelingGrid() {
+  const g = document.getElementById("feeling-grid");
+  g.innerHTML = "";
+  for(let f=1;f<=10;f++){
+    const b = document.createElement("button");
+    b.className = "feel-btn" + (state.feeling===f?" on":"");
+    b.textContent = f;
+    b.onclick = ()=>{ state.feeling=f; renderFeelingGrid(); };
+    g.appendChild(b);
+  }
+}
+
+// ── Exertion buttons ──
+function renderExertionGrid() {
+  const g = document.getElementById("exertion-grid");
+  g.innerHTML = "";
+  EXERTION.forEach(opt=>{
+    const b = document.createElement("button");
+    b.className = "ex-btn" + (state.exertion===opt?" on":"");
+    b.textContent = opt;
+    b.onclick = ()=>{ state.exertion=opt; renderExertionGrid(); };
+    g.appendChild(b);
+  });
+}
+
+// ── Checkboxes ──
+function toggle(field) {
+  state[field] = !state[field];
+  updateCheck(field);
+  if(field==="walkDone") {
+    document.getElementById("walk-extra").style.display = state.walkDone?"block":"none";
+  }
+}
+function updateCheck(field) {
+  const el = document.getElementById("cb-"+field);
+  if(!el) return;
+  el.className = "check-box" + (state[field]?" on":"");
+  el.textContent = state[field]?"✓":"";
+}
+function syncAllChecks() {
+  ["warmup","cooldown","walkDone","intervalOk","breathingOk"].forEach(updateCheck);
+  document.getElementById("walk-extra").style.display = state.walkDone?"block":"none";
+}
+
+// ── Exercise table ──
+function renderExTable() {
+  state.rounds = parseInt(document.getElementById("f-rounds").value);
+  const wrap = document.getElementById("ex-table-wrap");
+  let html = '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="ex-table">';
+  html += '<thead><tr><th style="text-align:left">ÜBUNG</th>';
+  for(let r=0;r<3;r++) html += `<th class="${r<state.rounds?"active-col":""}">R${r+1}</th>`;
+  html += "</tr></thead><tbody>";
+  EXERCISES.forEach((ex,i)=>{
+    html += `<tr><td class="ex-name">${i+1}. ${ex}</td>`;
+    for(let r=0;r<3;r++){
+      if(r<state.rounds){
+        const on = state.exercises[i][r];
+        html += `<td class="ex-cell"><button class="cb-btn${on?" on":""}" onclick="toggleEx(${i},${r})">${on?"✓":""}</button></td>`;
+      } else {
+        html += `<td class="cb-dash">–</td>`;
+      }
+    }
+    html += "</tr>";
+  });
+  html += "</tbody></table></div>";
+  wrap.innerHTML = html;
+  updateProgress();
+}
+
+function toggleEx(i,r) {
+  state.exercises[i][r] = !state.exercises[i][r];
+  renderExTable();
+}
+
+function updateProgress() {
+  const done = state.exercises.reduce((a,row)=>a+row.slice(0,state.rounds).filter(Boolean).length,0);
+  const total = EXERCISES.length * state.rounds;
+  const p = total>0?Math.round((done/total)*100):0;
+  document.getElementById("prog-text").textContent = `${done}/${total} · ${p}%`;
+  document.getElementById("prog-fill").style.width = p+"%";
+}
+
+function doneCount(s) { return s.exercises.reduce((a,r)=>a+r.slice(0,s.rounds).filter(Boolean).length,0); }
+function totalCount(s) { return EXERCISES.length * s.rounds; }
+function pct(s) { const t=totalCount(s); return t>0?Math.round((doneCount(s)/t)*100):0; }
+
+// ── Save / Load form ──
+function formToState() {
+  state.date = document.getElementById("f-date").value;
+  state.time = document.getElementById("f-time").value;
+  state.loadSeconds = parseInt(document.getElementById("f-secs").value);
+  state.walkMinutes = parseInt(document.getElementById("f-walkmin").value)||0;
+  state.pain = document.getElementById("f-pain").value;
+}
+
+function stateToForm() {
+  document.getElementById("f-date").value = state.date;
+  document.getElementById("f-time").value = state.time||"";
+  document.getElementById("f-rounds").value = state.rounds;
+  document.getElementById("f-secs").value = state.loadSeconds;
+  document.getElementById("f-walkmin").value = state.walkMinutes;
+  document.getElementById("f-pain").value = state.pain||"";
+  syncAllChecks();
+  renderFeelingGrid();
+  renderExertionGrid();
+  renderExTable();
+}
+
+function saveSession() {
+  formToState();
+  if(editIdx!==null) {
+    sessions[editIdx] = JSON.parse(JSON.stringify(state));
+    editIdx = null;
+  } else {
+    sessions.unshift(JSON.parse(JSON.stringify(state)));
+  }
+  save();
+  const btn = document.getElementById("save-btn");
+  btn.textContent = "✅ Gespeichert!";
+  setTimeout(()=>{
+    btn.textContent = "💾 Eintrag speichern";
+    state = emptyState();
+    stateToForm();
+    showView("history");
+  },1200);
+}
+
+function editSession(i) {
+  state = JSON.parse(JSON.stringify(sessions[i]));
+  editIdx = i;
+  stateToForm();
+  showView("log");
+  document.getElementById("save-btn").textContent = "💾 Aktualisieren";
+}
+
+function deleteSession(i) {
+  if(confirm("Diesen Eintrag löschen?")) {
+    sessions.splice(i,1);
+    save();
+    renderHistory();
+  }
+}
+
+// ── History ──
+function renderHistory() {
+  const el = document.getElementById("history-list");
+  if(!sessions.length) { el.innerHTML='<div class="empty">Noch keine Einträge.<br><span style="font-size:12px">Starte mit deinem ersten Training!</span></div>'; return; }
+  el.innerHTML = sessions.map((s,i)=>{
+    const p = pct(s);
+    const col = p===100?"#4caf7d":p>=50?"#f5c99a":"#b5432a";
+    const exCol = EXERTION_COLORS[s.exertion]||"#99aabb";
+    return `
+    <div class="hist-item">
+      <div class="hist-head">
+        <div>
+          <div class="hist-date">${formatDate(s.date)}${s.time?" · "+s.time+" Uhr":""}</div>
+          <div class="hist-meta">
+            Stimmung: ${s.feeling}/10
+            ${s.exertion?`<span style="color:${exCol}"> · ${s.exertion}</span>`:""}
+            ${s.walkDone?` · 🚶 ${s.walkMinutes} Min.`:""}
+          </div>
+          <div style="font-size:11px;color:#4a6888;margin-top:3px">
+            ${s.rounds} Runde${s.rounds!==1?"n":""}
+            ${s.warmup?" · ✓ Warm-Up":""}${s.cooldown?" · ✓ Cool-Down":""}
+          </div>
+        </div>
+        <div class="hist-pct">
+          <div class="big" style="color:${col}">${p}%</div>
+          <div class="small">Übungen</div>
+        </div>
+      </div>
+      ${s.pain&&s.pain.trim()?`<div class="pain-note">⚠️ ${s.pain}</div>`:""}
+      <div class="hist-actions">
+        <button class="sm-btn" style="background:#1e4060;color:#ddeeff" onclick="editSession(${i})">✏️ Bearbeiten</button>
+        <button class="sm-btn" style="background:#1a1a3a;color:#e8856a" onclick="deleteSession(${i})">🗑️ Löschen</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── Stats ──
+function renderStats() {
+  const n = sessions.length;
+  const avgFeel = n ? (sessions.reduce((a,s)=>a+s.feeling,0)/n).toFixed(1) : "–";
+  const avgWalk = n ? Math.round(sessions.reduce((a,s)=>a+(s.walkMinutes||0),0)/n) : 0;
+
+  document.getElementById("stat-cards").innerHTML = `
+    <div class="stat-card"><div class="st">Trainings</div><div class="sv">${n}</div><div class="su">Einheiten</div></div>
+    <div class="stat-card"><div class="st">⌀ Stimmung</div><div class="sv">${avgFeel}</div><div class="su">/10</div></div>
+    <div class="stat-card"><div class="st">⌀ Gehen</div><div class="sv">${avgWalk}</div><div class="su">Min.</div></div>
+  `;
+
+  const exportHTML = `
+    <div class="chart-card">
+      <div class="chart-title">📦 Datensicherung & Export</div>
+      <p style="font-size:13px;color:#c8dcf0;margin-bottom:14px;line-height:1.6">
+        Exportiere deine Daten als JSON (Supabase-kompatibel) oder CSV (Excel/Numbers).
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="exportJSON()" style="padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,#1565c0,#0d7a5f);color:#ddeeff;font-family:Georgia,serif;font-size:14px;font-weight:bold">
+          ⬇️ Export als JSON (Backup / Supabase)
+        </button>
+        <button onclick="exportCSV()" style="padding:12px;border-radius:10px;border:none;background:linear-gradient(90deg,#1a3a6b,#1a4d6b);color:#ddeeff;font-family:Georgia,serif;font-size:14px;font-weight:bold">
+          ⬇️ Export als CSV (Excel / Numbers)
+        </button>
+        <label style="padding:12px;border-radius:10px;border:2px dashed #4a6888;color:#7ab0d8;font-size:14px;text-align:center;cursor:pointer">
+          ⬆️ Import (JSON-Backup wiederherstellen)
+          <input type="file" accept=".json" onchange="importJSON(event)" style="display:none"/>
+        </label>
+      </div>
+    </div>`;
+
+  const area = document.getElementById("charts-area");
+  if(n<2){
+    area.innerHTML = '<div class="empty" style="margin-bottom:14px">Ab 2 Einträgen erscheinen hier Diagramme.</div>' + exportHTML;
+    return;
+  }
+
+  const data = [...sessions].reverse().slice(-14);
+
+  area.innerHTML = `
+    ${svgLineChart("Stimmung vor dem Training", data, s=>s.feeling, "#f5c99a", 1, 10)}
+    ${svgBarChart("Übungen abgeschlossen (%)", data, s=>pct(s), "#1e88e5", 0, 100)}
+    ${svgBarChart("Gehtraining (Minuten)", data, s=>s.walkMinutes||0, "#4caf7d")}
+    ${exertionDist()}
+    ${exportHTML}
+  `;
+}
+
+function svgLineChart(title, data, valFn, color, minV, maxV) {
+  const W=320, H=120, PL=28, PR=8, PT=8, PB=24;
+  const iW=W-PL-PR, iH=H-PT-PB;
+  if(!maxV) maxV = Math.max(...data.map(valFn), 1);
+  if(!minV) minV = 0;
+  const range = maxV - minV || 1;
+  const pts = data.map((s,i)=>{
+    const x = PL + (i/(data.length-1||1))*iW;
+    const y = PT + iH - ((valFn(s)-minV)/range)*iH;
+    return [x,y];
+  });
+  const polyline = pts.map(([x,y])=>`${x},${y}`).join(" ");
+  const dots = pts.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="3.5" fill="#1565c0" stroke="${color}" stroke-width="1.5"/>`).join("");
+  const xLabels = data.map((s,i)=>{
+    if(data.length<=7 || i%(Math.ceil(data.length/5))===0) {
+      const x = PL + (i/(data.length-1||1))*iW;
+      return `<text x="${x}" y="${H-4}" fill="#4a6888" font-size="8" text-anchor="middle">${formatDate(s.date).split(",")[0]}</text>`;
+    }
+    return "";
+  }).join("");
+  const yLabels = [minV, Math.round((minV+maxV)/2), maxV].map(v=>{
+    const y = PT + iH - ((v-minV)/range)*iH;
+    return `<text x="${PL-3}" y="${y+3}" fill="#4a6888" font-size="8" text-anchor="end">${v}</text>`;
+  }).join("");
+  const grid = [minV, Math.round((minV+maxV)/2), maxV].map(v=>{
+    const y = PT + iH - ((v-minV)/range)*iH;
+    return `<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="#1e4060" stroke-dasharray="3,3"/>`;
+  }).join("");
+
+  return `<div class="chart-card"><div class="chart-title">${title}</div>
+  <div class="chart-wrap">
+  <svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:260px">
+    ${grid}
+    <polyline points="${polyline}" fill="none" stroke="${color}" stroke-width="2"/>
+    ${dots}
+    ${xLabels}${yLabels}
+  </svg></div></div>`;
+}
+
+function svgBarChart(title, data, valFn, color, minV=0, maxV=null) {
+  const W=320, H=120, PL=28, PR=8, PT=8, PB=24;
+  const iW=W-PL-PR, iH=H-PT-PB;
+  const vals = data.map(valFn);
+  if(!maxV) maxV = Math.max(...vals, 1);
+  const range = maxV - minV || 1;
+  const bW = Math.max(4, iW/data.length - 3);
+  const bars = data.map((s,i)=>{
+    const v = valFn(s);
+    const h = ((v-minV)/range)*iH;
+    const x = PL + (i/(data.length-1||1))*iW - bW/2;
+    const y = PT+iH-h;
+    let lbl = "";
+    if(data.length<=7 || i%(Math.ceil(data.length/5))===0)
+      lbl = `<text x="${x+bW/2}" y="${H-4}" fill="#4a6888" font-size="8" text-anchor="middle">${formatDate(s.date).split(",")[0]}</text>`;
+    return `<rect x="${x}" y="${y}" width="${bW}" height="${Math.max(h,1)}" fill="${color}" rx="3"/>${lbl}`;
+  }).join("");
+  const yLabels = [0, Math.round(maxV/2), maxV].map(v=>{
+    const y = PT + iH - ((v-minV)/range)*iH;
+    return `<text x="${PL-3}" y="${y+3}" fill="#4a6888" font-size="8" text-anchor="end">${v}</text>`;
+  }).join("");
+  const grid = [0, Math.round(maxV/2), maxV].map(v=>{
+    const y = PT + iH - ((v-minV)/range)*iH;
+    return `<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="#1e4060" stroke-dasharray="3,3"/>`;
+  }).join("");
+
+  return `<div class="chart-card"><div class="chart-title">${title}</div>
+  <div class="chart-wrap">
+  <svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:260px">
+    ${grid}${bars}${yLabels}
+  </svg></div></div>`;
+}
+
+function exertionDist() {
+  const n = sessions.length||1;
+  const rows = EXERTION.map(opt=>{
+    const count = sessions.filter(s=>s.exertion===opt).length;
+    const p = Math.round((count/n)*100);
+    const col = EXERTION_COLORS[opt];
+    return `<div class="dist-bar">
+      <div class="dist-label"><span style="color:#c8dcf0">${opt}</span><span style="color:#4a6888">${count}× (${p}%)</span></div>
+      <div class="dist-track"><div class="dist-fill" style="width:${p}%;background:${col}"></div></div>
+    </div>`;
+  }).join("");
+  return `<div class="chart-card"><div class="chart-title">Anstrengung – Verteilung</div>${rows}</div>`;
+}
+
+// ── Export / Import ──
+function exportJSON() {
+  if(!sessions.length){ alert("Noch keine Daten zum Exportieren."); return; }
+  const exportData = {
+    export_date: new Date().toISOString(),
+    app: "Herz-Trainingstagebuch",
+    version: "1.0",
+    sessions: sessions.map((s,i) => ({
+      id: i + 1,
+      date: s.date,
+      time: s.time || null,
+      feeling_before: s.feeling,
+      warmup_done: s.warmup,
+      rounds: s.rounds,
+      load_seconds: s.loadSeconds,
+      exercises: s.exercises.map((r, ei) => ({
+        name: EXERCISES[ei],
+        round_1: r[0],
+        round_2: r[1],
+        round_3: r[2],
+        completed_rounds: r.slice(0, s.rounds).filter(Boolean).length
+      })),
+      exercises_completion_pct: pct(s),
+      cooldown_done: s.cooldown,
+      walk_done: s.walkDone,
+      walk_minutes: s.walkMinutes || 0,
+      interval_ok: s.intervalOk,
+      exertion: s.exertion || null,
+      pain_notes: s.pain || null,
+      breathing_ok: s.breathingOk
+    }))
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `herz-training-export-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportCSV() {
+  if(!sessions.length){ alert("Noch keine Daten zum Exportieren."); return; }
+  const headers = ["Datum","Uhrzeit","Stimmung","Warm-Up","Runden","Sek/Übung","Übungen %","Cool-Down","Gehen","Geh-Minuten","Anstrengung","Schmerzen","Atmung OK"];
+  const rows = sessions.map(s => [
+    s.date, s.time||"", s.feeling,
+    s.warmup?"ja":"nein",
+    s.rounds, s.loadSeconds,
+    pct(s),
+    s.cooldown?"ja":"nein",
+    s.walkDone?"ja":"nein",
+    s.walkMinutes||0,
+    s.exertion||"",
+    (s.pain||"").replace(/,/g,";"),
+    s.breathingOk?"ja":"nein"
+  ]);
+  const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
+  const blob = new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `herz-training-export-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Support both raw array and our export format
+      const imported = Array.isArray(data) ? data : data.sessions ? data.sessions.map(s => ({
+        date: s.date,
+        time: s.time || "",
+        feeling: s.feeling_before || 5,
+        warmup: s.warmup_done || false,
+        rounds: s.rounds || 2,
+        loadSeconds: s.load_seconds || 30,
+        exercises: s.exercises ? s.exercises.map(ex => [ex.round_1||false, ex.round_2||false, ex.round_3||false]) : Array(9).fill([false,false,false]),
+        cooldown: s.cooldown_done || false,
+        walkDone: s.walk_done || false,
+        walkMinutes: s.walk_minutes || 0,
+        intervalOk: s.interval_ok || false,
+        exertion: s.exertion || "",
+        pain: s.pain_notes || "",
+        breathingOk: s.breathing_ok || false
+      })) : null;
+      if(!imported) throw new Error("Unbekanntes Format");
+      if(confirm(`${imported.length} Einträge importieren? Bestehende Daten bleiben erhalten.`)) {
+        sessions = [...imported, ...sessions];
+        save();
+        alert(`✅ ${imported.length} Einträge erfolgreich importiert!`);
+        renderStats();
+      }
+    } catch(err) {
+      alert("Fehler beim Import: Ungültige JSON-Datei.");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+// ── Init ──
+load();
+stateToForm();
+</script>
+</body>
+</html>
